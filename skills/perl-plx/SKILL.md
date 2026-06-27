@@ -114,4 +114,4 @@ plx --config env
 plx --config env add <name> <value>
 ```
 
-Use `.dir` libspec entries for bare source library directories such as `lib` or `../core-perl/lib`. Use `.ll` libspec entries only for `local::lib` roots such as `local` or `devel`. If CPAN dependencies are installed directly into the configured Perl's site directories, no `.ll` entry is needed. Do not use `.ll` for checkout source trees; it activates local::lib behavior rather than just adding a source directory to `PERL5LIB`.
+Use `.dir` libspec entries for bare source library directories such as `lib` or `../some-project/lib`. Use `.ll` libspec entries only for `local::lib` roots such as `local` or `devel`. If CPAN dependencies are installed directly into the configured Perl's site directories, no `.ll` entry is needed. Do not use `.ll` for checkout source trees; it activates local::lib behavior rather than just adding a source directory to `PERL5LIB`.
