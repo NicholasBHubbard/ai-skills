@@ -51,10 +51,22 @@ plx --libs
 
 Use `.dir` entries for source trees under active development. This is the plx equivalent of making editable checkout libraries visible without installing them into the configured Perl.
 
-Install dependencies into the configured Perl directly when the project uses a single project Perl install:
+Install dependencies into the configured Perl directly when the project uses a single project Perl install. Do not use `plx --cpanm` for this mode; `plx --cpanm` requires `-l` or `-L` because it is specifically a local::lib install helper. Instead, run `cpanm` through the configured Perl environment:
 
 ```bash
-plx --cpanm --notest --installdeps .
+plx perl /path/to/project-perl/bin/cpanm --notest --installdeps .
+```
+
+If the configured Perl's `bin` directory is on the layout `PATH`, this shorter form may work:
+
+```bash
+plx cpanm --notest --installdeps .
+```
+
+When the project Perl is explicit and already has `cpanm`, direct execution is also acceptable:
+
+```bash
+/path/to/project-perl/bin/cpanm --notest --installdeps .
 ```
 
 Install dependencies into a project-local `local::lib` only when the project explicitly uses local-lib dependency roots:
