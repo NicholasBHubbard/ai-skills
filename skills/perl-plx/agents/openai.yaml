@@ -1,0 +1,4 @@
+interface:
+  display_name: "Perl plx"
+  short_description: "Use plx for Perl project commands"
+  default_prompt: "Use $perl-plx to run Perl project commands through plx."
