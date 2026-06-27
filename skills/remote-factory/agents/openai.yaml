@@ -1,0 +1,4 @@
+interface:
+  display_name: "Remote Factory"
+  short_description: "Use Factory for autonomous development loops"
+  default_prompt: "Use $remote-factory to run remote-factory on this project."
