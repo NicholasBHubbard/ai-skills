@@ -1,11 +1,11 @@
 ---
 name: perl-plx
-description: Use plx, the Perl Layout Executor, for Perl project setup and commands inside a project-specific .plx layout, especially projects that rely on local::lib-managed dependencies. Use when working in Perl repositories that use or should use plx, running Perl scripts/tests/tools through the project layout, inspecting plx config/env/libs/paths, bootstrapping dependencies with cpanm, or avoiding raw perl/prove/cpanm commands that would bypass the layout.
+description: Use plx, the Perl Layout Executor, for Perl project setup and commands inside a project-specific .plx layout. Use when working in Perl repositories that use or should use plx to select a project Perl, add checkout source libraries with .dir libspecs, activate local::lib roots with .ll libspecs, run Perl scripts/tests/tools through the project layout, inspect plx config/env/libs/paths, bootstrap dependencies with cpanm, or avoid raw perl/prove/cpanm commands that would bypass the layout.
 ---
 
 # Perl plx
 
-plx is the Perl Layout Executor. It finds a project `.plx` layout, selects the configured Perl, activates project-local `local::lib` roots such as `local` and `devel`, sets library paths and environment, then runs Perl commands inside that layout. Treat the official docs as the source of truth:
+plx is the Perl Layout Executor. It finds a project `.plx` layout, selects the configured Perl, adds configured source library directories, optionally activates `local::lib` roots such as `local` and `devel`, sets paths and environment, then runs Perl commands inside that layout. Treat the official docs as the source of truth:
 
 - Official docs: https://metacpan.org/pod/App::plx
 - Local full manual when plx is installed: `perldoc plx`
@@ -17,7 +17,7 @@ When exact behavior, command choices, or flags matter, read the official docs, r
 
 Use `plx` in commands. If it is not on `PATH`, check for it in `$HOME/.local/bin/plx`.
 
-In a Perl project that uses plx, prefer `plx ...` over raw `perl`, `prove`, `cpanm`, or project scripts so the configured Perl, `PERL5LIB`, `PATH`, and `local::lib` directories are active. One of plx's main strengths is making project-local dependency layers boring: commands automatically see modules installed into configured local libraries without hand-written `-Ilocal/lib/perl5`, shell activation, or global Perl pollution.
+In a Perl project that uses plx, prefer `plx ...` over raw `perl`, `prove`, `cpanm`, or project scripts so the configured Perl, `PERL5LIB`, `PATH`, source `lib` directories, and any configured `local::lib` directories are active. One of plx's main strengths is making project library wiring boring: commands can automatically see checkout modules from `.dir` libspecs and, when desired, modules installed into configured local libraries from `.ll` libspecs.
 
 Before running project commands, confirm the layout when needed:
 
@@ -41,7 +41,23 @@ plx --init 5.38.0
 plx --init /path/to/perl
 ```
 
-Install dependencies into a project-local `local::lib`:
+Add checkout source libraries so `-Ilib` and sibling `-I../repo/lib` flags become automatic:
+
+```bash
+plx --config libspec add 50-core.dir ../core-perl/lib
+plx --config libspec add 75-self.dir lib
+plx --libs
+```
+
+Use `.dir` entries for source trees under active development. This is the plx equivalent of making editable checkout libraries visible without installing them into the configured Perl.
+
+Install dependencies into the configured Perl directly when the project uses a single project Perl install:
+
+```bash
+plx --cpanm --notest --installdeps .
+```
+
+Install dependencies into a project-local `local::lib` only when the project explicitly uses local-lib dependency roots:
 
 ```bash
 plx --cpanm -llocal --notest --installdeps .
@@ -54,7 +70,7 @@ plx --cpanm -ldevel --notest Carton
 plx carton install
 ```
 
-Use separate `local::lib` roots when useful. A common pattern is `local` for normal project dependencies and `devel` for developer-only tools such as Carton, cpm, or ack.
+Use separate `local::lib` roots when useful. A common pattern is `local` for normal project dependencies and `devel` for developer-only tools such as Carton, cpm, or ack. Do not add `.ll` entries when dependencies are intentionally installed into the configured Perl's own site directories.
 
 Run commands through the layout:
 
@@ -98,4 +114,4 @@ plx --config env
 plx --config env add <name> <value>
 ```
 
-Use `ll` libspec entries for `local::lib` roots such as `local` or `devel`, and `dir` entries for bare library directories such as `lib`. Prefer `ll` for installed dependencies so plx can activate the matching `local::lib` environment consistently.
+Use `.dir` libspec entries for bare source library directories such as `lib` or `../core-perl/lib`. Use `.ll` libspec entries only for `local::lib` roots such as `local` or `devel`. If CPAN dependencies are installed directly into the configured Perl's site directories, no `.ll` entry is needed. Do not use `.ll` for checkout source trees; it activates local::lib behavior rather than just adding a source directory to `PERL5LIB`.
