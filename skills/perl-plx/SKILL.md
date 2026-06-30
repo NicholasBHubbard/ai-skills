@@ -19,6 +19,17 @@ Use `plx` in commands. If it is not on `PATH`, check for it in `$HOME/.local/bin
 
 In a Perl project that uses plx, prefer `plx ...` over raw `perl`, `prove`, `cpanm`, or project scripts so the configured Perl, `PERL5LIB`, `PATH`, source `lib` directories, and any configured `local::lib` directories are active. One of plx's main strengths is making project library wiring boring: commands can automatically see checkout modules from `.dir` libspecs and, when desired, modules installed into configured local libraries from `.ll` libspecs.
 
+Prefer a custom Perl for real project layouts. Use the system Perl only for quick inspection or when the project requires it. Do not install project CPAN dependencies into the system Perl by default.
+
+If a custom Perl is needed, ask where to install it. Recommend `/opt/perl-$PERL_VERSION` when the user has no preference. Build it with [Perl::Build](https://metacpan.org/pod/Perl::Build):
+
+```bash
+PERL_VERSION=5.42.0
+PERL_PREFIX="/opt/perl-$PERL_VERSION"
+curl -L https://raw.githubusercontent.com/tokuhirom/Perl-Build/master/perl-build | perl - "$PERL_VERSION" "$PERL_PREFIX"
+plx --init "$PERL_PREFIX/bin/perl"
+```
+
 Before running project commands, confirm the layout when needed:
 
 ```bash
