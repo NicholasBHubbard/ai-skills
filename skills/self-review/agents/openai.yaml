@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self Review"
+  short_description: "Double-check recent code changes"
+  default_prompt: "Use $self-review to double check your recent code changes carefully."
